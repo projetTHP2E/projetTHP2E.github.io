@@ -1,12 +1,20 @@
-// Ajoute une nouvelle ligne matériau
+let compteurMateriaux = 0;
+
+// Fonction pour ajouter une nouvelle ligne matériau
 function ajouterLigne() {
+  compteurMateriaux++;
+
   const container = document.getElementById("materiauxContainer");
 
   const nouvelleLigne = document.createElement("div");
   nouvelleLigne.className = "ligne-materiau";
 
+  // Label dynamique avec numéro du matériau
+  const labelTexte = `Matériau n°${compteurMateriaux} :`;
+
+  // Création du HTML de la ligne
   nouvelleLigne.innerHTML = `
-    <label>Matériau :</label>
+    <label>${labelTexte}</label>
     <select name="materiau" required>
       <option value="">--Choisir--</option>
       <option value="bois">Bois</option>
@@ -19,14 +27,32 @@ function ajouterLigne() {
   `;
 
   container.appendChild(nouvelleLigne);
+
+  mettreAJourNumeros();
 }
 
-// Supprime une ligne matériau donnée
+// Fonction pour supprimer une ligne donnée
 function supprimerLigne(btn) {
   btn.parentElement.remove();
+  mettreAJourNumeros();
 }
 
-// Traitement du formulaire
+// Met à jour la numérotation des matériaux après ajout/suppression
+function mettreAJourNumeros() {
+  const lignes = document.querySelectorAll("#materiauxContainer .ligne-materiau");
+  compteurMateriaux = lignes.length;
+  lignes.forEach((ligne, index) => {
+    const label = ligne.querySelector("label");
+    label.textContent = `Matériau n°${index + 1} :`;
+  });
+}
+
+// Initialisation : ajout automatique d'une première ligne au chargement
+window.onload = () => {
+  ajouterLigne();
+};
+
+// Gestion du submit du formulaire
 document.getElementById("ecoForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -36,7 +62,6 @@ document.getElementById("ecoForm").addEventListener("submit", function (e) {
     return;
   }
 
-  // Facteurs d'impact carbone par matériau
   const facteurMateriau = {
     bois: 0.2,
     béton: 0.8,
@@ -46,6 +71,11 @@ document.getElementById("ecoForm").addEventListener("submit", function (e) {
   let score = conso;
 
   const lignesMateriaux = document.querySelectorAll("#materiauxContainer .ligne-materiau");
+
+  if (lignesMateriaux.length === 0) {
+    alert("Veuillez ajouter au moins un matériau.");
+    return;
+  }
 
   for (let ligne of lignesMateriaux) {
     const selectMat = ligne.querySelector('select[name="materiau"]');
