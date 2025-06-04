@@ -30,9 +30,22 @@ button {
   margin-top: 10px;
 }
 
-#ajouter {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
+.add-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.remove-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 4px 8px;
   cursor: pointer;
 }
 
