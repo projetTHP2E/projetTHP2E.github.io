@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Projet THP2E</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <style>
     .ligne-materiau {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: auto 150px 150px 150px auto;
       gap: 10px;
-      margin-bottom: 15px;
       align-items: center;
+      margin-bottom: 15px;
     }
 
-    .ligne-materiau select,
-    .ligne-materiau input {
-      flex: 1;
-      min-width: 120px;
+    select,
+    input[type="number"] {
+      padding: 5px;
+      font-size: 1em;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .add-button {
@@ -44,12 +46,12 @@
 
   <form id="ecoForm">
     <label for="conso">Consommation énergétique annuelle (en kWh) :</label>
-    <input type="number" id="conso" name="conso" required><br><br>
+    <input type="number" id="conso" name="conso" min="0" step="any" required /><br /><br />
 
     <h3>Matériaux</h3>
     <div id="materiauxContainer">
       <div class="ligne-materiau">
-        <label>Matériau n°1 :</label>
+        <label>Matériau :</label>
         <select name="materiau" required>
           <option value="">--Choisir--</option>
           <option value="bois">Bois</option>
@@ -57,12 +59,14 @@
           <option value="verre">Verre</option>
         </select>
 
-        <input type="number" name="masse" placeholder="Masse (kg)" required>
-        <input type="number" name="distance" placeholder="Distance (km)" required>
+        <input type="number" name="masse" placeholder="Masse (kg)" min="0" step="any" required />
+        <input type="number" name="distance" placeholder="Distance (km)" min="0" step="any" required />
+
+        <!-- Pas de bouton supprimer sur la première ligne -->
       </div>
     </div>
 
-    <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br>
+    <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br />
 
     <button type="submit">Valider</button>
   </form>
