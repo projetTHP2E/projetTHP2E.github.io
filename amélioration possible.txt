@@ -1,0 +1,37 @@
+amélioration possible:
+1. Gestion des erreurs et validations fines
+Validation complète de chaque champ (masse > 0, distance > 0, consommation > 0).
+
+Messages d’erreur clairs et non bloquants (par exemple, empêcher la soumission si des valeurs sont invalides).
+
+Prévention des doublons de matériaux ou alertes sur des incohérences.
+
+2. Interface plus riche / ergonomique
+Affichage dynamique des résultats :
+Par exemple, un graphique simple (barres, camembert) pour montrer la contribution de chaque matériau à l’impact total.
+
+Amélioration du formulaire :
+
+Ajout de suggestions automatiques (autocomplete) si vous avez une liste étendue de matériaux.
+
+Boutons “supprimer” pour chaque ligne matériau.
+
+Indication en temps réel des scores partiels au fur et à mesure que l’utilisateur remplit les champs.
+
+Responsive design pour que ça soit utilisable facilement sur mobile.
+
+3. Export des résultats
+Bouton pour exporter le résultat final dans un fichier PDF ou CSV, utile pour garder une trace ou pour présentation.
+
+Possibilité d’exporter le détail de chaque matériau et son impact.
+
+4. Organisation du code et modularité
+Séparer clairement le code JS en fonctions pour faciliter la maintenance.
+
+Préparer l’architecture pour pouvoir intégrer la base de données externe dès qu’elle sera prête (par ex. fonction calculerImpact(materiau, masse, distance) qui pourra évoluer).
+
+5. Bonus : Simulation interactive / Scénarios
+Permettre à l’utilisateur de sauvegarder plusieurs scénarios et comparer leurs résultats.
+
+Permettre de modifier certains paramètres (ex : coefficients d’impact) pour tester l’effet de changements.
+
