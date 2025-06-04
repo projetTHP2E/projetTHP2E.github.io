@@ -1,7 +1,7 @@
 body {
   font-family: Arial, sans-serif;
   margin: 30px;
-  max-width: 1200px;
+  max-width: 900px;
 }
 
 form {
@@ -9,19 +9,24 @@ form {
 }
 
 .ligne-materiau {
-  display: grid;
-  grid-template-columns: auto 150px 150px 150px auto;
-  gap: 10px;
+  display: flex;
   align-items: center;
+  gap: 10px;
   margin-bottom: 15px;
+  width: 100%;
 }
 
-input[type="number"],
-select {
+.ligne-materiau label {
+  min-width: 110px;
+  font-weight: bold;
+}
+
+.ligne-materiau select,
+.ligne-materiau input[type="number"] {
+  flex-grow: 1;
+  min-width: 0;
   padding: 5px;
   font-size: 1em;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 button {
@@ -47,10 +52,11 @@ button {
   border-radius: 5px;
   padding: 4px 8px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 h3 {
-  margin: 0;
+  margin: 0 0 10px 0;
 }
 
 #resultat {
