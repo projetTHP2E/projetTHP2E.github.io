@@ -69,5 +69,5 @@ document.addEventListener("DOMContentLoaded", function () {
     resultat.textContent = `Consommation annuelle saisie : ${conso} kWh (calcul à venir).`;
   });
 
-  ajouterLigneMateriau(); // une ligne par défaut au chargement
+  ajouterLigneMateriau(); // Ajout d'une ligne par défaut au chargement
 });
