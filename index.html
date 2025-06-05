@@ -11,20 +11,16 @@
   <form id="ecoForm">
     <label for="conso">
       Consommation énergétique annuelle (en kWh) :
-      <img src="blue-interrogation-point.png" class="tooltip-icon" alt="aide" title="Indiquez ici la consommation annuelle d’énergie du bâtiment (chauffage, éclairage, etc.).">
+      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Indiquez ici la consommation annuelle totale d’énergie du bâtiment.">
     </label>
     <input type="number" id="conso" name="conso" required><br><br>
 
-    <h3>
-      Matériaux
-      <img src="blue-interrogation-point.png" class="tooltip-icon" alt="aide" title="Ajoutez chaque matériau avec sa masse et la distance moyenne parcourue depuis son site de production.">
+    <h3>Matériaux
+      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Pour chaque matériau, indiquez son type, sa masse (en kg) et la distance (en km) entre son lieu de production et le chantier.">
     </h3>
 
-    <div id="materiauxContainer">
-      <!-- La première ligne est générée via JavaScript -->
-    </div>
-
-    <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br>
+    <div id="materiauxContainer"></div>
+    <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br><br>
     <button type="submit">Valider</button>
   </form>
 
