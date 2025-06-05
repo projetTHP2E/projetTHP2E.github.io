@@ -48,8 +48,9 @@ button[type="submit"] {
 }
 
 .tooltip-icon {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
+  object-fit: contain; /* Garde les proportions */
   vertical-align: middle;
   margin-left: 5px;
   cursor: help;
