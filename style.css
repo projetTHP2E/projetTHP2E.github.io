@@ -1,7 +1,7 @@
 body {
   font-family: Arial, sans-serif;
   margin: 30px;
-  max-width: 900px;
+  max-width: 1000px;
 }
 
 form {
@@ -17,40 +17,47 @@ form {
   width: 100%;
 }
 
+.ligne-materiau label {
+  min-width: 110px;
+  font-weight: bold;
+}
+
 .ligne-materiau select,
 .ligne-materiau input {
   flex: 1;
   min-width: 120px;
-  padding: 8px;
+  padding: 5px;
   font-size: 1em;
   box-sizing: border-box;
 }
 
-.add-button,
-.remove-button,
-button[type="submit"] {
+button {
   padding: 8px 16px;
   font-size: 1em;
   margin-top: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 .add-button {
   background-color: #28a745;
   color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .remove-button {
   background-color: #dc3545;
   color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 4px 8px;
+  cursor: pointer;
 }
 
 .tooltip-icon {
   width: 20px;
   height: 20px;
-  object-fit: contain; /* Garde les proportions */
+  object-fit: contain;
   vertical-align: middle;
   margin-left: 5px;
   cursor: help;
