@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Projet THP2E</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Évaluation Acceptation au Label THP2E</h1>
 
   <form id="ecoForm">
-    <label for="conso">Consommation énergétique annuelle (en kWh) :</label>
-    <input type="number" id="conso" name="conso" min="0" step="any" required /><br /><br />
+    <label for="conso">
+      Consommation énergétique annuelle (en kWh) :
+      <img src="blue-interrogation-point.png" class="tooltip-icon" alt="aide" title="Indiquez ici la consommation annuelle d’énergie du bâtiment (chauffage, éclairage, etc.).">
+    </label>
+    <input type="number" id="conso" name="conso" required><br><br>
 
-    <h3>Matériaux</h3>
+    <h3>
+      Matériaux
+      <img src="blue-interrogation-point.png" class="tooltip-icon" alt="aide" title="Ajoutez chaque matériau avec sa masse et la distance moyenne parcourue depuis son site de production.">
+    </h3>
+
     <div id="materiauxContainer">
-      <!-- Lignes matériaux ajoutées ici -->
+      <!-- La première ligne est générée via JavaScript -->
     </div>
 
-    <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br />
-
+    <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br>
     <button type="submit">Valider</button>
   </form>
 
