@@ -19,6 +19,7 @@ function ajouterLigne() {
       <option value="">--Choisir--</option>
       <option value="bois">Bois</option>
       <option value="béton">Béton</option>
+      <option value="acier">Acier</option>
       <option value="verre">Verre</option>
     </select>
     <input type="number" name="masse" placeholder="Masse (kg)" min="0" step="any" required />
@@ -65,6 +66,7 @@ document.getElementById("ecoForm").addEventListener("submit", function (e) {
   const facteurMateriau = {
     bois: 0.2,
     béton: 0.8,
+    acier: 0.5,
     verre: 1.2,
   };
 
