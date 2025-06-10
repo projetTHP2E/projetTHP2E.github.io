@@ -2,27 +2,27 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Émission CO₂ – Prototype</title>
+  <title>Label THP2E - Prototype</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <h1>miss totale de CO₂ – Prototype</h1>
+  <h1>Evaluation Acceptation au label</h1>
 
   <form id="ecoForm">
     <label for="conso">
-      Consommation énergétique annuelle (kWh) :
-      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Si vide, la valeur par défaut est utilisée.">
+      Consommation énergétique annuelle :
+      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Indiquez ici votre consommation énergétique annuelle (en KWh). Si vous ne savez pas, vous pouvez laisser une valeur de référence (réponse vide)">
     </label>
-    <input type="number" id="conso" name="conso" placeholder="Valeur ou laisse vide"><br><br>
+    <input type="number" id="conso" name="conso" placeholder="en kWh"><br><br>
 
     <h3>
       Matériaux
-      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Ajoute autant de matériaux que nécessaires. Champ 'distance' peut rester vide.">
+      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Ajoutez autant de matériaux que nécessaires. A chaque fois, renseignez un matériau puis la masse (en kg) correspondante de ce matériau qui a été utilisé puis la distance (en km) utilisé pour acheminer ce matériau (Il existe une valeur de référence si vous n'en avez aucune idée)">
     </h3>
     <div id="materiauxContainer"></div>
     <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br><br>
-    <button type="submit">Calculer émission</button>
+    <button type="submit">Validez votre saisie</button>
   </form>
 
   <h2>Résultat total :</h2>

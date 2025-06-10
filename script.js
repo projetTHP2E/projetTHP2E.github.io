@@ -7,11 +7,13 @@ Promise.all([
   chargerCSV('Valeur prototype/Valeurs prototype - Materiaux.csv'),
   chargerCSV('Valeur prototype/Valeurs prototype - Transport.csv')
 ]).then(([eData, mData, tData]) => {
+
   // Energie
   eData.forEach(r => {
     if (r.param.toLowerCase().includes('facteur')) energie = parseFloat(r.valeur);
     if (r.param.toLowerCase().includes('conso')) consoDefaut = parseFloat(r.valeur);
   });
+
   // Matériaux
   mData.forEach(r => {
     matData[r.materiau] = {
@@ -19,10 +21,12 @@ Promise.all([
       distRef: parseFloat(r.distance_ref)
     };
   });
-  // Transport : on prend camion comme redondance
+
+  // Transport
   tData.forEach(r => {
     transportFacteur = Math.max(transportFacteur, parseFloat(r.facteur_transport));
   });
+
   // Init formulaire
   document.addEventListener("DOMContentLoaded", () => ajouterLigne());
   document.getElementById("ecoForm").addEventListener("submit", calculerEmission);
