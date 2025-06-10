@@ -2,30 +2,31 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Projet THP2E</title>
+  <title>Émission CO₂ – Prototype</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <h1>Évaluation Acceptation au Label THP2E</h1>
+  <h1>Émission totale de CO₂ – Prototype</h1>
 
   <form id="ecoForm">
     <label for="conso">
-      Consommation énergétique annuelle (en kWh) :
-      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Indiquez ici la consommation annuelle d’énergie.">
+      Consommation énergétique annuelle (kWh) :
+      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Si vide, la valeur par défaut est utilisée.">
     </label>
-    <input type="number" id="conso" name="conso" required><br><br>
+    <input type="number" id="conso" name="conso" placeholder="Valeur ou laisse vide"><br><br>
 
-    <h3>Matériaux
-      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Pour chaque matériau, indiquez son type, sa masse (kg), et la distance (km).">
+    <h3>
+      Matériaux
+      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Ajoute autant de matériaux que nécessaires. Champ 'distance' peut rester vide.">
     </h3>
-
     <div id="materiauxContainer"></div>
     <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br><br>
-    <button type="submit">Valider</button>
+    <button type="submit">Calculer émission</button>
   </form>
 
-  <h2>Résultat :</h2>
-  <p id="resultat">Vlez remplir le formulaire.</p>
+  <h2>Résultat total :</h2>
+  <p id="resultat">…</p>
 
   <script src="script.js"></script>
 </body>
