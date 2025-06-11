@@ -4,6 +4,7 @@ body {
   max-width: 900px;
 }
 form { margin-top: 20px; }
+
 .ligne-materiau {
   display: flex;
   flex-wrap: wrap;
@@ -11,26 +12,34 @@ form { margin-top: 20px; }
   align-items: center;
   margin-bottom: 15px;
 }
-.ligne-materiau label { min-width: 120px; font-weight: bold; }
-.ligne-materiau select,
-.ligne-materiau input { flex: 1; min-width: 100px; padding: 5px; }
-button { padding: 8px 16px; margin-top: 10px; border: none; border-radius: 5px; cursor: pointer; }
+.ligne-materiau label {
+  min-width: 120px;
+  font-weight: bold;
+}
+.ligne-materiau input {
+  flex: 1;
+  min-width: 100px;
+  padding: 5px;
+}
+button {
+  padding: 8px 16px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 .add-button { background-color: #28a745; color: white; }
 .remove-button { background-color: #dc3545; color: white; }
-.tooltip-icon {
-  width: 20px; height: 20px; object-fit: contain;
-  vertical-align: middle; margin-left: 5px; cursor: help;
-}
-#resultat { margin-top: 20px; font-weight: bold; }
 
-#methodo {
-  margin-top: 50px;
-  padding-top: 20px;
-  border-top: 1px solid #ccc;
+.tooltip-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-left: 5px;
+  cursor: pointer;
 }
-#methodo h3 {
-  margin-bottom: 10px;
-}
-#methodo ul {
-  padding-left: 20px;
+#resultat {
+  margin-top: 20px;
+  font-weight: bold;
 }

@@ -1,5 +1,0 @@
-materiau,Facteur d'emission (kgCO2e/tonne),Distance de transport de réf (km),Source,Commentaire
-Acier,2210,600,ADEME & INIES,
-Bois,40,1100,INIES,
-Béton traditionnel,695,200,INIES,
-Verre,1528,500,ADEME & INIES,"Facteur d'emission (kgCO2e/m²) = 38,2 (valeur INIES convertie dans la colonne B"

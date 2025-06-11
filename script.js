@@ -1,78 +1,65 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const form = document.getElementById("ecoForm");
   const container = document.getElementById("materiauxContainer");
-  let compteur = 1;
-
+  let compteur = 0;
   let materiaux = {};
-  let facteurEmissionEnergie = 0;
-  let consoDefaut = 0;
-  let facteurTransport = 0.05;
 
-  // Fonction d'initialisation
-  async function chargerDonnees() {
-    const [dataEnergie, dataMateriaux, dataTransport] = await Promise.all([
-      fetch("Valeur prototype/Valeurs prototype - Energie.csv").then(res => res.text()),
-      fetch("Valeur prototype/Valeurs prototype - Materiaux.csv").then(res => res.text()),
-      fetch("Valeur prototype/Valeurs prototype - Transport.csv").then(res => res.text())
-    ]);
+  // Chargement des fichiers CSV
+  const [energieText, matText, transportText] = await Promise.all([
+    fetch("Valeur prototype/Valeurs prototype - Energie.csv").then(res => res.text()),
+    fetch("Valeur prototype/Valeurs prototype - Materiaux.csv").then(res => res.text()),
+    fetch("Valeur prototype/Valeurs prototype - Transport.csv").then(res => res.text())
+  ]);
 
-    // Energie
-    const energieLignes = dataEnergie.trim().split("\n");
-    const [, facteurStr, defautStr] = energieLignes[1].split(",");
-    facteurEmissionEnergie = parseFloat(facteurStr);
-    consoDefaut = parseFloat(defautStr);
+  // Énergie
+  const energieParsed = Papa.parse(energieText, { header: true, skipEmptyLines: true });
+  const energieRow = energieParsed.data[0];
+  const facteurEmissionEnergie = parseFloat(energieRow["Facteur d'emission (kgCO2/kWh)"].replace(",", "."));
+  const consoDefaut = parseFloat(energieRow["Consommation énergétique moyenne annuelle d'un foyer (kWh/an)"]);
 
-    // Materiaux
-    materiaux = {};
-    dataMateriaux.trim().split("\n").slice(1).forEach(line => {
-      const [nom, facteur, distanceRef] = line.split(",");
-      if (nom && facteur && distanceRef) {
-        materiaux[nom.trim().toLowerCase()] = {
-          facteur: parseFloat(facteur),
-          distance: parseFloat(distanceRef)
-        };
-      }
-    });
+  // Transport
+  const transportParsed = Papa.parse(transportText, { header: true, skipEmptyLines: true });
+  const facteurTransport = parseFloat(transportParsed.data[0]["Facteur d'émission (kgCO2e/km)"].replace(",", "."));
 
-    // Transport
-    const transportLigne = dataTransport.trim().split("\n")[1];
-    if (transportLigne) {
-      const valeur = transportLigne.split(",")[1];
-      if (!isNaN(parseFloat(valeur))) {
-        facteurTransport = parseFloat(valeur);
-      }
-    }
+  // Matériaux (conversion colonnes → lignes)
+  const matData = Papa.parse(matText, { skipEmptyLines: true });
+  const noms = matData.data[0].slice(1);
+  const facteurs = matData.data[1].slice(1);
+  const distances = matData.data[2].slice(1);
 
-    // On peut maintenant activer le bouton d'ajout
-    ajouterLigne(); // Ajoute une première ligne par défaut
-  }
+  noms.forEach((nom, i) => {
+    materiaux[nom.trim().toLowerCase()] = {
+      facteur: parseFloat(facteurs[i].replace(",", ".")),
+      distance: parseFloat(distances[i])
+    };
+  });
 
-  // Fonction appelée pour ajouter une ligne de matériaux
   function ajouterLigne() {
+    compteur++;
     const ligne = document.createElement("div");
     ligne.className = "ligne-materiau";
     ligne.innerHTML = `
       <label>Matériau n°${compteur} :</label>
-      <select name="materiau" required>
-        <option value="">--Choisir--</option>
-        ${Object.keys(materiaux).map(m => `<option value="${m}">${m.charAt(0).toUpperCase() + m.slice(1)}</option>`).join("")}
-      </select>
+      <input type="text" name="materiau" list="listeMateriaux" placeholder="Nom du matériau" required>
       <input type="number" name="masse" placeholder="Masse (kg)" required>
       <input type="number" name="distance" placeholder="Distance (km)">
-      <button type="button" class="remove-button">✖</button>
+      <button type="button" class="remove-button" onclick="this.parentElement.remove()">✖</button>
     `;
-
-    ligne.querySelector(".remove-button").addEventListener("click", () => {
-      ligne.remove();
-    });
-
     container.appendChild(ligne);
-    compteur++;
   }
+
+  // Liste d’autocomplétion
+  const datalist = document.createElement("datalist");
+  datalist.id = "listeMateriaux";
+  Object.keys(materiaux).forEach(m => {
+    const option = document.createElement("option");
+    option.value = m;
+    datalist.appendChild(option);
+  });
+  document.body.appendChild(datalist);
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-
     const consoInput = parseFloat(document.getElementById("conso").value);
     const conso = isNaN(consoInput) ? consoDefaut : consoInput;
 
@@ -80,10 +67,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const lignes = container.querySelectorAll(".ligne-materiau");
     lignes.forEach(ligne => {
-      const materiau = ligne.querySelector("select").value.toLowerCase();
+      const nom = ligne.querySelector('input[name="materiau"]').value.trim().toLowerCase();
       const masse = parseFloat(ligne.querySelector('input[name="masse"]').value) || 0;
       const distanceInput = parseFloat(ligne.querySelector('input[name="distance"]').value);
-      const data = materiaux[materiau];
+      const data = materiaux[nom];
 
       if (data) {
         const distance = isNaN(distanceInput) ? data.distance : distanceInput;
@@ -96,8 +83,4 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("resultat").innerText =
       `Émission totale estimée : ${totalCO2.toFixed(2)} kg eq CO₂.`;
   });
-
-  // Démarrage de l'appli après chargement des CSV
-  chargerDonnees();
-  window.ajouterLigne = ajouterLigne;
 });
