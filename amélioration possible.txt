@@ -35,3 +35,15 @@ Permettre à l’utilisateur de sauvegarder plusieurs scénarios et comparer leu
 
 Permettre de modifier certains paramètres (ex : coefficients d’impact) pour tester l’effet de changements.
 
+
+
+
+Confidentialité et hébergement :
+
+Actuellement, le site est probablement hébergé en statique (par ex. GitHub Pages). On pourra envisager de :
+
+masquer l’URL du fichier CSV dans le code ou
+
+intégrer les valeurs dans le script (moins flexible mais plus discret),
+
+ou passer à un back-end pour mieux gérer les données et les accès.

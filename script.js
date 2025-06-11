@@ -1,9 +1,10 @@
 document.addEventListener("DOMContentLoaded", async function () {
   const form = document.getElementById("ecoForm");
   const container = document.getElementById("materiauxContainer");
-  let compteur = 1;
+  const resultat = document.getElementById("resultat");
+  let compteur = 0;
 
-  // Chargement CSV
+  // Chargement des CSV
   const [dataEnergie, dataMateriaux, dataTransport] = await Promise.all([
     fetch("Valeur prototype/Valeurs prototype - Energie.csv").then(res => res.text()),
     fetch("Valeur prototype/Valeurs prototype - Materiaux.csv").then(res => res.text()),
@@ -22,13 +23,33 @@ document.addEventListener("DOMContentLoaded", async function () {
     };
   });
 
-  let facteurTransport = 0.05; // valeur par défaut
+  let facteurTransport = 0.05;
   const transportLigne = dataTransport.split("\n")[1];
   if (transportLigne) {
     const valeur = transportLigne.split(",")[1];
     if (!isNaN(parseFloat(valeur))) {
       facteurTransport = parseFloat(valeur);
     }
+  }
+
+  function calculerTotalCO2(conso, lignes) {
+    let totalCO2 = conso * facteurEmissionEnergie;
+
+    lignes.forEach(ligne => {
+      const materiau = ligne.querySelector("select").value.toLowerCase();
+      const masse = parseFloat(ligne.querySelector('input[name="masse"]').value) || 0;
+      const distanceInput = parseFloat(ligne.querySelector('input[name="distance"]').value);
+      const data = materiaux[materiau];
+
+      if (data) {
+        const distance = isNaN(distanceInput) ? data.distance : distanceInput;
+        const masseTonne = masse / 1000;
+        const emission = masseTonne * data.facteur + distance * facteurTransport;
+        totalCO2 += emission;
+      }
+    });
+
+    return totalCO2;
   }
 
   window.ajouterLigne = function () {
@@ -48,30 +69,24 @@ document.addEventListener("DOMContentLoaded", async function () {
     container.appendChild(ligne);
   };
 
+  // Ajouter une ligne par défaut
+  ajouterLigne();
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
     const consoInput = parseFloat(document.getElementById("conso").value);
     const conso = isNaN(consoInput) ? consoDefaut : consoInput;
 
-    let totalCO2 = conso * facteurEmissionEnergie;
-
     const lignes = container.querySelectorAll(".ligne-materiau");
-    lignes.forEach(ligne => {
-      const materiau = ligne.querySelector("select").value.toLowerCase();
-      const masse = parseFloat(ligne.querySelector('input[name="masse"]').value) || 0;
-      const distanceInput = parseFloat(ligne.querySelector('input[name="distance"]').value);
-      const data = materiaux[materiau];
 
-      if (data) {
-        const distance = isNaN(distanceInput) ? data.distance : distanceInput;
-        const masseTonne = masse / 1000;
-        const emission = masseTonne * data.facteur + distance * facteurTransport;
-        totalCO2 += emission;
-      }
-    });
+    if (lignes.length === 0) {
+      resultat.innerHTML = `<span class="erreur">Veuillez ajouter au moins un matériau.</span>`;
+      return;
+    }
 
-    document.getElementById("resultat").innerText =
-      `Émission totale estimée : ${totalCO2.toFixed(2)} kg eq CO₂.`;
+    const totalCO2 = calculerTotalCO2(conso, lignes);
+
+    resultat.innerText = `Émission totale estimée : ${totalCO2.toFixed(2)} kg eq CO₂.`;
   });
 });
