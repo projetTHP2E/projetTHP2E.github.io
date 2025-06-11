@@ -2,23 +2,23 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Pr THP2E - Prototype</title>
+  <title>Label THP2E - Prototype</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <h1>Evaluation Acceptation au label</h1>
+  <h1>Évaluation d'acceptation au label</h1>
 
   <form id="ecoForm">
     <label for="conso">
       Consommation énergétique annuelle :
-      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Indiquez ici votre consommation énergétique annuelle (en KWh). Si vous ne savez pas, vous pouvez laisser une valeur de référence (réponse vide)">
+      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Indiquez ici votre consommation énergétique annuelle (en kWh). Si vous ne savez pas, laissez vide pour utiliser la valeur de référence.">
     </label>
     <input type="number" id="conso" name="conso" placeholder="en kWh"><br><br>
 
     <h3>
       Matériaux
-      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Ajoutez autant de matériaux que nécessaires. A chaque fois, renseignez un matériau puis la masse (en kg) correspondante de ce matériau qui a été utilisé puis la distance (en km) utilisé pour acheminer ce matériau (Il existe une valeur de référence si vous n'en avez aucune idée)">
+      <img src="blue-interrogation-point.png" class="tooltip-icon" title="Ajoutez autant de matériaux que nécessaires. Indiquez le nom, la masse (kg) et la distance (km) pour le transport. Si la distance est inconnue, une valeur de référence est utilisée.">
     </h3>
     <div id="materiauxContainer"></div>
     <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br><br>
@@ -27,6 +27,17 @@
 
   <h2>Résultat total :</h2>
   <p id="resultat">Veuillez remplir le formulaire</p>
+
+  <section id="methodo">
+    <h3>Méthodologie et sources</h3>
+    <p>Les calculs d'émissions sont basés sur les données issues de :</p>
+    <ul>
+      <li>Consommation énergétique : RTE (mix électrique français 2022)</li>
+      <li>Facteurs matériaux : Base INIES (2022)</li>
+      <li>Transport : Données Ademe - Carbone4 (2022)</li>
+    </ul>
+    <p>Les facteurs d’émission sont exprimés en kg eq CO₂ par unité fonctionnelle (kWh, tonne, km). Ces données peuvent être modifiées ou mises à jour par les administrateurs du projet via les fichiers CSV.</p>
+  </section>
 
   <script src="script.js"></script>
 </body>

@@ -1,21 +1,22 @@
 document.addEventListener("DOMContentLoaded", async function () {
   const form = document.getElementById("ecoForm");
   const container = document.getElementById("materiauxContainer");
-  const resultat = document.getElementById("resultat");
-  let compteur = 0;
+  let compteur = 1;
 
-  // Chargement des CSV
+  // Chargement CSV
   const [dataEnergie, dataMateriaux, dataTransport] = await Promise.all([
     fetch("Valeur prototype/Valeurs prototype - Energie.csv").then(res => res.text()),
     fetch("Valeur prototype/Valeurs prototype - Materiaux.csv").then(res => res.text()),
     fetch("Valeur prototype/Valeurs prototype - Transport.csv").then(res => res.text())
   ]);
 
-  const facteurEmissionEnergie = parseFloat(dataEnergie.split("\n")[1].split(",")[1]);
-  const consoDefaut = parseFloat(dataEnergie.split("\n")[1].split(",")[2]);
+  const energieLignes = dataEnergie.trim().split("\n");
+  const [_, facteurEmissionStr, consoDefautStr] = energieLignes[1].split(",");
+  const facteurEmissionEnergie = parseFloat(facteurEmissionStr);
+  const consoDefaut = parseFloat(consoDefautStr);
 
   const materiaux = {};
-  dataMateriaux.split("\n").slice(1).forEach(line => {
+  dataMateriaux.trim().split("\n").slice(1).forEach(line => {
     const [nom, facteur, distanceRef] = line.split(",");
     if (nom) materiaux[nom.trim().toLowerCase()] = {
       facteur: parseFloat(facteur),
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   });
 
   let facteurTransport = 0.05;
-  const transportLigne = dataTransport.split("\n")[1];
+  const transportLigne = dataTransport.trim().split("\n")[1];
   if (transportLigne) {
     const valeur = transportLigne.split(",")[1];
     if (!isNaN(parseFloat(valeur))) {
@@ -32,9 +33,32 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  function calculerTotalCO2(conso, lignes) {
+  window.ajouterLigne = function () {
+    const ligne = document.createElement("div");
+    ligne.className = "ligne-materiau";
+    ligne.innerHTML = `
+      <label>Matériau n°${compteur} :</label>
+      <select name="materiau" required>
+        <option value="">--Choisir--</option>
+        ${Object.keys(materiaux).map(m => `<option value="${m}">${m.charAt(0).toUpperCase() + m.slice(1)}</option>`).join("")}
+      </select>
+      <input type="number" name="masse" placeholder="Masse (kg)" required>
+      <input type="number" name="distance" placeholder="Distance (km)">
+      <button type="button" class="remove-button" onclick="this.parentElement.remove()">✖</button>
+    `;
+    container.appendChild(ligne);
+    compteur++;
+  };
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const consoInput = parseFloat(document.getElementById("conso").value);
+    const conso = isNaN(consoInput) ? consoDefaut : consoInput;
+
     let totalCO2 = conso * facteurEmissionEnergie;
 
+    const lignes = container.querySelectorAll(".ligne-materiau");
     lignes.forEach(ligne => {
       const materiau = ligne.querySelector("select").value.toLowerCase();
       const masse = parseFloat(ligne.querySelector('input[name="masse"]').value) || 0;
@@ -49,44 +73,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     });
 
-    return totalCO2;
-  }
-
-  window.ajouterLigne = function () {
-    compteur++;
-    const ligne = document.createElement("div");
-    ligne.className = "ligne-materiau";
-    ligne.innerHTML = `
-      <label>Matériau n°${compteur} :</label>
-      <select name="materiau" required>
-        <option value="">--Choisir--</option>
-        ${Object.keys(materiaux).map(m => `<option value="${m}">${m.charAt(0).toUpperCase() + m.slice(1)}</option>`).join("")}
-      </select>
-      <input type="number" name="masse" placeholder="Masse (kg)" required>
-      <input type="number" name="distance" placeholder="Distance (km)">
-      <button type="button" class="remove-button" onclick="this.parentElement.remove()">✖</button>
-    `;
-    container.appendChild(ligne);
-  };
-
-  // Ajouter une ligne par défaut
-  ajouterLigne();
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const consoInput = parseFloat(document.getElementById("conso").value);
-    const conso = isNaN(consoInput) ? consoDefaut : consoInput;
-
-    const lignes = container.querySelectorAll(".ligne-materiau");
-
-    if (lignes.length === 0) {
-      resultat.innerHTML = `<span class="erreur">Veuillez ajouter au moins un matériau.</span>`;
-      return;
-    }
-
-    const totalCO2 = calculerTotalCO2(conso, lignes);
-
-    resultat.innerText = `Émission totale estimée : ${totalCO2.toFixed(2)} kg eq CO₂.`;
+    document.getElementById("resultat").innerText =
+      `Émission totale estimée : ${totalCO2.toFixed(2)} kg eq CO₂.`;
   });
 });
