@@ -47,3 +47,35 @@ masquer l’URL du fichier CSV dans le code ou
 intégrer les valeurs dans le script (moins flexible mais plus discret),
 
 ou passer à un back-end pour mieux gérer les données et les accès.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--> problème de saisie des matériaux ne fonctionne pas
+--> clique sur une croix pour un matériaux efface toute la ligne correspondante
+--> dorénavant, il faudrait cliquer sur le bouton d'aide pour que le texte s'affiche
+
+--> ergonomie: sécurité, confortfacilité d'utilisation, performance, esthétique
+https://www.keacrea.com/les-regles-indispensables-de-l-ergonomie-d-un-bon-site-web
+https://www.snoweb.io/fr/web-design/ergonomie-site-web/
+
+
+
+
+
+
+
+
