@@ -2,36 +2,63 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Label THP2E - Prototype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Label THP2E - Calculateur d'Émissions</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <h1>Evaluation Acceptation au label</h1>
+  <div class="container">
+    <div class="header">
+      <h1>🌱 Label THP2E</h1>
+      <p>Calculateur d'émissions carbone pour votre projet</p>
+    </div>
 
-  <form id="ecoForm">
-    <label for="conso">
-      Consommation énergétique annuelle :
-      <img src="blue-interrogation-point.png" class="tooltip-icon" alt="Info" title="Indiquez ici votre consommation énergétique annuelle (en KWh). Si vous ne savez pas, vous pouvez laisser une valeur de référence (réponse vide)">
-    </label>
-    <input type="number" id="conso" name="conso" placeholder="en kWh"><br><br>
+    <div class="form-section">
+      <form id="ecoForm">
+        <!-- Section Énergie -->
+        <div class="section-title">
+          <div class="section-icon">⚡</div>
+          Consommation Énergétique
+        </div>
+        
+        <div class="input-group">
+          <label for="conso">
+            Consommation énergétique annuelle
+            <div class="tooltip-icon" data-tooltip="Indiquez votre consommation énergétique annuelle en kWh. Si vous ne connaissez pas cette valeur, laissez vide pour utiliser la moyenne française (4 278 kWh/an)">?</div>
+          </label>
+          <input type="number" id="conso" name="conso" placeholder="4 278 kWh (valeur moyenne si vide)">
+        </div>
 
-    <h3>
-      Matériaux
-      <img src="blue-interrogation-point.png" class="tooltip-icon" alt="Info" title="Ajoutez autant de matériaux que nécessaires. À chaque fois, renseignez un matériau puis la masse (en kg) correspondante de ce matériau qui a été utilisé puis la distance (en km) utilisé pour acheminer ce matériau (Il existe une valeur de référence si vous n'en avez aucune idée)">
-    </h3>
-    <div id="materiauxContainer"></div>
-    <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br><br>
-    <button type="submit">Validez votre saisie</button>
-  </form>
+        <!-- Section Matériaux -->
+        <div class="section-title">
+          <div class="section-icon">🏗️</div>
+          Matériaux de Construction
+        </div>
+        
+        <div id="materiauxContainer"></div>
+        
+        <button type="button" class="add-button" onclick="ajouterLigne()">
+          <span>+</span> Ajouter un matériau
+        </button>
 
-  <h2>Résultat total :</h2>
-  <p id="resultat">Veuillez remplir le formulaire</p>
+        <button type="submit" class="submit-button">
+          🧮 Calculer les émissions
+        </button>
+      </form>
+    </div>
 
-  <!-- Inputs pour télécharger les fichiers CSV -->
-  <input type="file" id="energieFile" accept=".csv" style="display: none;">
-  <input type="file" id="materiauxFile" accept=".csv" style="display: none;">
-  <input type="file" id="transportFile" accept=".csv" style="display: none;">
+    <div class="resultat-section" id="resultatSection" style="display: none;">
+      <div class="resultat-title">Émissions totales estimées</div>
+      <div class="resultat-value" id="resultatValue">0</div>
+      <div class="resultat-unit">kg éq. CO₂</div>
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <div class="empty-state-icon">📊</div>
+      <h3>Remplissez le formulaire pour voir le résultat</h3>
+      <p>Ajoutez vos données de consommation et matériaux pour calculer votre empreinte carbone</p>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

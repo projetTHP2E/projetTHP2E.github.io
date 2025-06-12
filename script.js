@@ -1,120 +1,211 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("ecoForm");
+// Données intégrées (basées sur vos fichiers CSV)
+const DATA = {
+  energie: {
+    facteurEmission: 0.0324, // kgCO2/kWh
+    consoDefaut: 4278 // kWh/an
+  },
+  materiaux: {
+    'acier': { facteur: 2210, distance: 600 },
+    'bois': { facteur: 40, distance: 1100 },
+    'béton': { facteur: 695, distance: 200 },
+    'verre': { facteur: 1528, distance: 500 }
+  },
+  transport: {
+    facteur: 0.186 // kgCO2e/km (valeur de votre CSV Transport)
+  }
+};
+
+let compteur = 0;
+
+/**
+ * Ajoute une nouvelle ligne de matériau au formulaire
+ */
+function ajouterLigne() {
+  compteur++;
   const container = document.getElementById("materiauxContainer");
-  let compteur = 1;
-
-  // Fonction pour lire un fichier CSV
-  function readCSVFile(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (event) => resolve(event.target.result);
-      reader.onerror = (error) => reject(error);
-      reader.readAsText(file);
-    });
-  }
-
-  // Fonction pour charger les fichiers CSV
-  async function loadCSVFiles() {
-    try {
-      const energieFileInput = document.getElementById('energieFile');
-      const materiauxFileInput = document.getElementById('materiauxFile');
-      const transportFileInput = document.getElementById('transportFile');
-
-      // Écouteurs pour le téléchargement des fichiers
-      energieFileInput.onchange = () => handleFileUpload();
-      materiauxFileInput.onchange = () => handleFileUpload();
-      transportFileInput.onchange = () => handleFileUpload();
-
-      // Simuler un clic pour ouvrir la boîte de dialogue de téléchargement
-      energieFileInput.click();
-
-    } catch (error) {
-      console.error("Error loading CSV files:", error);
-    }
-  }
-
-  async function handleFileUpload() {
-    try {
-      const [dataEnergie, dataMateriaux, dataTransport] = await Promise.all([
-        readCSVFile(document.getElementById('energieFile').files[0]),
-        readCSVFile(document.getElementById('materiauxFile').files[0]),
-        readCSVFile(document.getElementById('transportFile').files[0])
-      ]);
-
-      parseCSVData(dataEnergie, dataMateriaux, dataTransport);
-    } catch (error) {
-      console.error("Error reading CSV files:", error);
-    }
-  }
-
-  // Fonction pour parser les données CSV
-  function parseCSVData(dataEnergie, dataMateriaux, dataTransport) {
-    const facteurEmissionEnergie = parseFloat(dataEnergie.split("\n")[1].split(",")[1]);
-    const consoDefaut = parseFloat(dataEnergie.split("\n")[1].split(",")[2]);
-
-    const materiaux = {};
-    dataMateriaux.split("\n").slice(1).forEach(line => {
-      const [nom, facteur, distanceRef] = line.split(",");
-      if (nom) materiaux[nom.trim().toLowerCase()] = {
-        facteur: parseFloat(facteur),
-        distance: parseFloat(distanceRef)
-      };
-    });
-
-    let facteurTransport = 0.05; // valeur par défaut
-    const transportLigne = dataTransport.split("\n")[1];
-    if (transportLigne) {
-      const valeur = transportLigne.split(",")[1];
-      if (!isNaN(parseFloat(valeur))) {
-        facteurTransport = parseFloat(valeur);
-      }
-    }
-
-    window.ajouterLigne = function () {
-      compteur++;
-      const ligne = document.createElement("div");
-      ligne.className = "ligne-materiau";
-      ligne.innerHTML = `
-        <label>Matériau n°${compteur} :</label>
+  
+  const ligne = document.createElement("div");
+  ligne.className = "ligne-materiau";
+  ligne.innerHTML = `
+    <div class="materiau-header">
+      <div class="materiau-number">Matériau #${compteur}</div>
+      <button type="button" class="remove-button" onclick="supprimerLigne(this)" title="Supprimer ce matériau">×</button>
+    </div>
+    <div class="materiau-inputs">
+      <div class="input-group">
+        <label>Type de matériau</label>
         <select name="materiau" required>
-          <option value="">--Choisir--</option>
-          ${Object.keys(materiaux).map(m => `<option value="${m}">${m.charAt(0).toUpperCase() + m.slice(1)}</option>`).join("")}
+          <option value="">-- Choisir un matériau --</option>
+          ${Object.keys(DATA.materiaux).map(m => 
+            `<option value="${m}">${m.charAt(0).toUpperCase() + m.slice(1)}</option>`
+          ).join("")}
         </select>
-        <input type="number" name="masse" placeholder="Masse (kg)" required>
-        <input type="number" name="distance" placeholder="Distance (km)">
-        <button type="button" class="remove-button" onclick="this.parentElement.remove()">✖</button>
-      `;
-      container.appendChild(ligne);
-    };
+      </div>
+      <div class="input-group">
+        <label>
+          Masse (kg)
+          <div class="tooltip-icon" data-tooltip="Indiquez la masse en kilogrammes du matériau utilisé">?</div>
+        </label>
+        <input type="number" name="masse" placeholder="0" required min="0" step="0.01">
+      </div>
+      <div class="input-group">
+        <label>
+          Distance (km)
+          <div class="tooltip-icon" data-tooltip="Distance de transport du matériau. Si vide, la distance de référence sera utilisée">?</div>
+        </label>
+        <input type="number" name="distance" placeholder="Auto" min="0" step="0.1">
+      </div>
+    </div>
+  `;
+  container.appendChild(ligne);
+}
 
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
+/**
+ * Supprime une ligne de matériau
+ */
+function supprimerLigne(button) {
+  const ligne = button.closest('.ligne-materiau');
+  ligne.remove();
+  
+  // Réorganiser les numéros des matériaux restants
+  reorganiserNumeros();
+}
 
-      const consoInput = parseFloat(document.getElementById("conso").value);
-      const conso = isNaN(consoInput) ? consoDefaut : consoInput;
+/**
+ * Réorganise les numéros des matériaux après suppression
+ */
+function reorganiserNumeros() {
+  const lignes = document.querySelectorAll('.ligne-materiau');
+  lignes.forEach((ligne, index) => {
+    const numeroElement = ligne.querySelector('.materiau-number');
+    numeroElement.textContent = `Matériau #${index + 1}`;
+  });
+  compteur = lignes.length;
+}
 
-      let totalCO2 = conso * facteurEmissionEnergie;
+/**
+ * Calcule les émissions de CO2 basées sur les données du formulaire
+ */
+function calculerEmissions(formData) {
+  // Calcul de la consommation énergétique
+  const consoInput = parseFloat(formData.get('conso'));
+  const conso = isNaN(consoInput) || consoInput === 0 ? DATA.energie.consoDefaut : consoInput;
+  let totalCO2 = conso * DATA.energie.facteurEmission;
 
-      const lignes = container.querySelectorAll(".ligne-materiau");
-      lignes.forEach(ligne => {
-        const materiau = ligne.querySelector("select").value.toLowerCase();
-        const masse = parseFloat(ligne.querySelector('input[name="masse"]').value) || 0;
-        const distanceInput = parseFloat(ligne.querySelector('input[name="distance"]').value);
-        const data = materiaux[materiau];
+  let detailsCalcul = {
+    energie: {
+      consommation: conso,
+      emission: conso * DATA.energie.facteurEmission
+    },
+    materiaux: [],
+    total: 0
+  };
 
-        if (data) {
-          const distance = isNaN(distanceInput) ? data.distance : distanceInput;
-          const masseTonne = masse / 1000;
-          const emission = masseTonne * data.facteur + distance * facteurTransport;
-          totalCO2 += emission;
-        }
+  // Calcul des matériaux
+  const lignes = document.querySelectorAll(".ligne-materiau");
+  lignes.forEach((ligne, index) => {
+    const materiau = ligne.querySelector("select[name='materiau']").value.toLowerCase();
+    const masse = parseFloat(ligne.querySelector("input[name='masse']").value) || 0;
+    const distanceInput = parseFloat(ligne.querySelector("input[name='distance']").value);
+    
+    if (materiau && DATA.materiaux[materiau] && masse > 0) {
+      const data = DATA.materiaux[materiau];
+      const distance = isNaN(distanceInput) ? data.distance : distanceInput;
+      const masseTonne = masse / 1000;
+      
+      // Émission du matériau + transport
+      const emissionMateriau = masseTonne * data.facteur;
+      const emissionTransport = distance * DATA.transport.facteur * masseTonne;
+      const emissionTotale = emissionMateriau + emissionTransport;
+      
+      totalCO2 += emissionTotale;
+      
+      // Stocker les détails pour debug si nécessaire
+      detailsCalcul.materiaux.push({
+        nom: materiau,
+        masse: masse,
+        distance: distance,
+        emissionMateriau: emissionMateriau,
+        emissionTransport: emissionTransport,
+        emissionTotale: emissionTotale
       });
+    }
+  });
 
-      document.getElementById("resultat").innerText =
-        `Émission totale estimée : ${totalCO2.toFixed(2)} kg eq CO₂.`;
-    });
+  detailsCalcul.total = totalCO2;
+  return detailsCalcul;
+}
+
+/**
+ * Affiche le résultat du calcul
+ */
+function afficherResultat(resultat) {
+  document.getElementById("resultatValue").textContent = resultat.total.toFixed(2);
+  document.getElementById("resultatSection").style.display = "block";
+  document.getElementById("emptyState").style.display = "none";
+
+  // Scroll fluide vers le résultat
+  document.getElementById("resultatSection").scrollIntoView({ 
+    behavior: "smooth",
+    block: "center"
+  });
+}
+
+/**
+ * Valide les données du formulaire
+ */
+function validerFormulaire() {
+  const lignes = document.querySelectorAll(".ligne-materiau");
+  let erreurs = [];
+
+  lignes.forEach((ligne, index) => {
+    const materiau = ligne.querySelector("select[name='materiau']").value;
+    const masse = ligne.querySelector("input[name='masse']").value;
+    
+    if (!materiau) {
+      erreurs.push(`Matériau #${index + 1}: Veuillez sélectionner un type de matériau`);
+    }
+    
+    if (!masse || parseFloat(masse) <= 0) {
+      erreurs.push(`Matériau #${index + 1}: Veuillez indiquer une masse valide`);
+    }
+  });
+
+  if (erreurs.length > 0) {
+    alert("Erreurs de validation:\n" + erreurs.join("\n"));
+    return false;
   }
 
-  // Charger les fichiers CSV
-  loadCSVFiles();
+  return true;
+}
+
+// Initialisation au chargement de la page
+document.addEventListener("DOMContentLoaded", function() {
+  // Ajouter une première ligne par défaut
+  ajouterLigne();
+
+  // Gestionnaire de soumission du formulaire
+  document.getElementById("ecoForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    // Validation
+    if (!validerFormulaire()) {
+      return;
+    }
+
+    // Collecte des données du formulaire
+    const formData = new FormData(this);
+    
+    // Calcul des émissions
+    const resultat = calculerEmissions(formData);
+    
+    // Affichage du résultat
+    afficherResultat(resultat);
+    
+    // Log pour debug (optionnel)
+    console.log("Détails du calcul:", resultat);
+  });
+
+  // Gestionnaire pour le bouton d'ajout (déjà défini dans le HTML avec onclick)
+  window.ajouterLigne = ajouterLigne;
 });
