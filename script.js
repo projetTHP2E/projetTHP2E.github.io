@@ -122,7 +122,7 @@ function calculerEmissions() {
       
       // Émission du matériau + transport
       const emissionMateriau = masseTonne * data.facteur;
-      const emissionTransport = distance * DATA.transport.facteur * masseTonne;
+      const emissionTransport = distance * DATA.transport.facteur;
       const emissionTotale = emissionMateriau + emissionTransport;
       
       totalCO2 += emissionTotale;
