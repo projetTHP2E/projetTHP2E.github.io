@@ -29,7 +29,7 @@ function ajouterLigne() {
   ligne.innerHTML = `
     <div class="materiau-header">
       <div class="materiau-number">Matériau #${compteur}</div>
-      <button type="button" class="remove-button" onclick="supprimerLigne(this)" title="Supprimer ce matériau">×</button>
+      <button type="button" class="remove-button" title="Supprimer ce matériau">×</button>
     </div>
     <div class="materiau-inputs">
       <div class="input-group">
@@ -57,7 +57,14 @@ function ajouterLigne() {
       </div>
     </div>
   `;
+  
   container.appendChild(ligne);
+  
+  // Ajouter l'événement de suppression au nouveau bouton
+  const removeBtn = ligne.querySelector('.remove-button');
+  removeBtn.addEventListener('click', function() {
+    supprimerLigne(this);
+  });
 }
 
 /**
@@ -86,9 +93,9 @@ function reorganiserNumeros() {
 /**
  * Calcule les émissions de CO2 basées sur les données du formulaire
  */
-function calculerEmissions(formData) {
+function calculerEmissions() {
   // Calcul de la consommation énergétique
-  const consoInput = parseFloat(formData.get('conso'));
+  const consoInput = parseFloat(document.getElementById('conso').value);
   const conso = isNaN(consoInput) || consoInput === 0 ? DATA.energie.consoDefaut : consoInput;
   let totalCO2 = conso * DATA.energie.facteurEmission;
 
@@ -184,6 +191,9 @@ document.addEventListener("DOMContentLoaded", function() {
   // Ajouter une première ligne par défaut
   ajouterLigne();
 
+  // Gestionnaire pour le bouton d'ajout de matériau
+  document.getElementById("addMaterialBtn").addEventListener("click", ajouterLigne);
+
   // Gestionnaire de soumission du formulaire
   document.getElementById("ecoForm").addEventListener("submit", function(e) {
     e.preventDefault();
@@ -193,11 +203,8 @@ document.addEventListener("DOMContentLoaded", function() {
       return;
     }
 
-    // Collecte des données du formulaire
-    const formData = new FormData(this);
-    
     // Calcul des émissions
-    const resultat = calculerEmissions(formData);
+    const resultat = calculerEmissions();
     
     // Affichage du résultat
     afficherResultat(resultat);
@@ -205,7 +212,4 @@ document.addEventListener("DOMContentLoaded", function() {
     // Log pour debug (optionnel)
     console.log("Détails du calcul:", resultat);
   });
-
-  // Gestionnaire pour le bouton d'ajout (déjà défini dans le HTML avec onclick)
-  window.ajouterLigne = ajouterLigne;
 });
