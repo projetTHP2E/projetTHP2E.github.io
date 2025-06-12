@@ -12,10 +12,8 @@ form { margin-top: 20px; }
   align-items: center;
   margin-bottom: 15px;
 }
-.ligne-materiau label {
-  min-width: 120px;
-  font-weight: bold;
-}
+.ligne-materiau label { min-width: 120px; font-weight: bold; }
+.ligne-materiau select,
 .ligne-materiau input {
   flex: 1;
   min-width: 100px;
@@ -39,7 +37,19 @@ button {
   margin-left: 5px;
   cursor: pointer;
 }
-#resultat {
-  margin-top: 20px;
-  font-weight: bold;
+.tooltip-wrapper::after {
+  content: attr(data-tooltip);
+  display: none;
+  position: absolute;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 8px;
+  color: #333;
+  font-size: 14px;
+  max-width: 300px;
+  z-index: 100;
 }
+.tooltip-wrapper.active::after {
+  display: block;
+}
+#resultat { margin-top: 20px; font-weight: bold; }

@@ -7,36 +7,31 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <h1>Évaluation de l’acceptabilité au label</h1>
+  <h1>Évaluation de l'acceptation au label</h1>
 
   <form id="ecoForm">
     <label for="conso">
       Consommation énergétique annuelle :
-      <img src="blue-interrogation-point.png" class="tooltip-icon" data-tooltip="Indiquez ici votre consommation énergétique annuelle (en kWh). Si vous ne savez pas, vous pouvez laisser vide.">
+      <span class="tooltip-wrapper">
+        <img src="blue-interrogation-point.png" class="tooltip-icon" data-tooltip="Indiquez ici votre consommation énergétique annuelle (en kWh). Si vous ne savez pas, vous pouvez laisser vide.">
+      </span>
     </label>
     <input type="number" id="conso" name="conso" placeholder="en kWh"><br><br>
 
     <h3>
-      Matériaux utilisés
-      <img src="blue-interrogation-point.png" class="tooltip-icon" data-tooltip="Renseignez les matériaux utilisés, leur masse (kg) et la distance de transport (km). Si vous ne connaissez pas certaines données, des valeurs par défaut seront utilisées.">
+      Matériaux
+      <span class="tooltip-wrapper">
+        <img src="blue-interrogation-point.png" class="tooltip-icon" data-tooltip="Ajoutez autant de matériaux que nécessaires. Indiquez un matériau, sa masse (en kg) et la distance (en km) pour l'acheminer.">
+      </span>
     </h3>
-
     <div id="materiauxContainer"></div>
     <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br><br>
-    <button type="submit">Valider la saisie</button>
+    <button type="submit">Validez votre saisie</button>
   </form>
 
   <h2>Résultat total :</h2>
   <p id="resultat">Veuillez remplir le formulaire</p>
 
   <script src="script.js"></script>
-  <script>
-    // Script pour les info-bulles au clic
-    document.querySelectorAll('.tooltip-icon').forEach(icon => {
-      icon.addEventListener('click', () => {
-        alert(icon.getAttribute('data-tooltip'));
-      });
-    });
-  </script>
 </body>
 </html>

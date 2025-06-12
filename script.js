@@ -1,76 +1,71 @@
 document.addEventListener("DOMContentLoaded", async function () {
   const form = document.getElementById("ecoForm");
   const container = document.getElementById("materiauxContainer");
+
   let compteur = 0;
   let materiaux = {};
 
-  // Chargement des fichiers CSV
-  const [energieText, matText, transportText] = await Promise.all([
+  // Lecture des CSV
+  const [energieTxt, materiauxTxt, transportTxt] = await Promise.all([
     fetch("Valeur prototype/Valeurs prototype - Energie.csv").then(res => res.text()),
     fetch("Valeur prototype/Valeurs prototype - Materiaux.csv").then(res => res.text()),
     fetch("Valeur prototype/Valeurs prototype - Transport.csv").then(res => res.text())
   ]);
 
-  // Énergie
-  const energieParsed = Papa.parse(energieText, { header: true, skipEmptyLines: true });
-  const energieRow = energieParsed.data[0];
-  const facteurEmissionEnergie = parseFloat(energieRow["Facteur d'emission (kgCO2/kWh)"].replace(",", "."));
-  const consoDefaut = parseFloat(energieRow["Consommation énergétique moyenne annuelle d'un foyer (kWh/an)"]);
+  // Traitement des données énergie
+  const lignesEnergie = energieTxt.trim().split("\n");
+  const facteurEmissionEnergie = parseFloat(lignesEnergie[1].split(",")[1].replace(",", "."));
+  const consoDefaut = parseFloat(lignesEnergie[1].split(",")[2]);
 
-  // Transport
-  const transportParsed = Papa.parse(transportText, { header: true, skipEmptyLines: true });
-  const facteurTransport = parseFloat(transportParsed.data[0]["Facteur d'émission (kgCO2e/km)"].replace(",", "."));
+  // Traitement des données matériaux
+  const lignesMat = materiauxTxt.trim().split("\n");
+  const nomsMateriaux = lignesMat[0].split(",").slice(1);
+  const facteurs = lignesMat[1].split(",").slice(1).map(v => parseFloat(v.replace(",", ".")));
+  const distances = lignesMat[2].split(",").slice(1).map(v => parseFloat(v.replace(",", ".")));
 
-  // Matériaux (conversion colonnes → lignes)
-  const matData = Papa.parse(matText, { skipEmptyLines: true });
-  const noms = matData.data[0].slice(1);
-  const facteurs = matData.data[1].slice(1);
-  const distances = matData.data[2].slice(1);
-
-  noms.forEach((nom, i) => {
+  nomsMateriaux.forEach((nom, i) => {
     materiaux[nom.trim().toLowerCase()] = {
-      facteur: parseFloat(facteurs[i].replace(",", ".")),
-      distance: parseFloat(distances[i])
+      facteur: facteurs[i],
+      distance: distances[i]
     };
   });
 
-  function ajouterLigne() {
+  // Transport
+  const transportLigne = transportTxt.trim().split("\n")[1];
+  const facteurTransport = parseFloat(transportLigne.split(",")[1].replace(",", "."));
+
+  // Ajouter une ligne matériau
+  window.ajouterLigne = function () {
     compteur++;
     const ligne = document.createElement("div");
     ligne.className = "ligne-materiau";
     ligne.innerHTML = `
       <label>Matériau n°${compteur} :</label>
-      <input type="text" name="materiau" list="listeMateriaux" placeholder="Nom du matériau" required>
+      <select name="materiau" required>
+        <option value="">--Choisir--</option>
+        ${Object.keys(materiaux).map(m => `<option value="${m}">${m.charAt(0).toUpperCase() + m.slice(1)}</option>`).join("")}
+      </select>
       <input type="number" name="masse" placeholder="Masse (kg)" required>
       <input type="number" name="distance" placeholder="Distance (km)">
       <button type="button" class="remove-button" onclick="this.parentElement.remove()">✖</button>
     `;
     container.appendChild(ligne);
-  }
+  };
 
-  // Liste d’autocomplétion
-  const datalist = document.createElement("datalist");
-  datalist.id = "listeMateriaux";
-  Object.keys(materiaux).forEach(m => {
-    const option = document.createElement("option");
-    option.value = m;
-    datalist.appendChild(option);
-  });
-  document.body.appendChild(datalist);
-
+  // Soumission du formulaire
   form.addEventListener("submit", function (e) {
     e.preventDefault();
+
     const consoInput = parseFloat(document.getElementById("conso").value);
     const conso = isNaN(consoInput) ? consoDefaut : consoInput;
-
     let totalCO2 = conso * facteurEmissionEnergie;
 
     const lignes = container.querySelectorAll(".ligne-materiau");
     lignes.forEach(ligne => {
-      const nom = ligne.querySelector('input[name="materiau"]').value.trim().toLowerCase();
+      const materiau = ligne.querySelector("select").value.toLowerCase();
       const masse = parseFloat(ligne.querySelector('input[name="masse"]').value) || 0;
       const distanceInput = parseFloat(ligne.querySelector('input[name="distance"]').value);
-      const data = materiaux[nom];
+      const data = materiaux[materiau];
 
       if (data) {
         const distance = isNaN(distanceInput) ? data.distance : distanceInput;
@@ -82,5 +77,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     document.getElementById("resultat").innerText =
       `Émission totale estimée : ${totalCO2.toFixed(2)} kg eq CO₂.`;
+  });
+
+  // Info-bulles cliquables
+  document.querySelectorAll('.tooltip-icon').forEach(icon => {
+    icon.addEventListener('click', function () {
+      const wrapper = this.closest('.tooltip-wrapper');
+      wrapper.classList.toggle('active');
+    });
   });
 });
