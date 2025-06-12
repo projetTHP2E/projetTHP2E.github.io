@@ -2,27 +2,23 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Pr THP2E - Prototype</title>
+  <title>Label THP2E - Prototype</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <h1>Évaluation de l'acceptation au label</h1>
+  <h1>Evaluation Acceptation au label</h1>
 
   <form id="ecoForm">
     <label for="conso">
       Consommation énergétique annuelle :
-      <span class="tooltip-wrapper">
-        <img src="blue-interrogation-point.png" class="tooltip-icon" data-tooltip="Indiquez ici votre consommation énergétique annuelle (en kWh). Si vous ne savez pas, vous pouvez laisser vide.">
-      </span>
+      <img src="blue-interrogation-point.png" class="tooltip-icon" alt="Info" title="Indiquez ici votre consommation énergétique annuelle (en KWh). Si vous ne savez pas, vous pouvez laisser une valeur de référence (réponse vide)">
     </label>
     <input type="number" id="conso" name="conso" placeholder="en kWh"><br><br>
 
     <h3>
       Matériaux
-      <span class="tooltip-wrapper">
-        <img src="blue-interrogation-point.png" class="tooltip-icon" data-tooltip="Ajoutez autant de matériaux que nécessaires. Indiquez un matériau, sa masse (en kg) et la distance (en km) pour l'acheminer.">
-      </span>
+      <img src="blue-interrogation-point.png" class="tooltip-icon" alt="Info" title="Ajoutez autant de matériaux que nécessaires. À chaque fois, renseignez un matériau puis la masse (en kg) correspondante de ce matériau qui a été utilisé puis la distance (en km) utilisé pour acheminer ce matériau (Il existe une valeur de référence si vous n'en avez aucune idée)">
     </h3>
     <div id="materiauxContainer"></div>
     <button type="button" class="add-button" onclick="ajouterLigne()">+ Ajouter un matériau</button><br><br>
@@ -31,6 +27,11 @@
 
   <h2>Résultat total :</h2>
   <p id="resultat">Veuillez remplir le formulaire</p>
+
+  <!-- Inputs pour télécharger les fichiers CSV -->
+  <input type="file" id="energieFile" accept=".csv" style="display: none;">
+  <input type="file" id="materiauxFile" accept=".csv" style="display: none;">
+  <input type="file" id="transportFile" accept=".csv" style="display: none;">
 
   <script src="script.js"></script>
 </body>
