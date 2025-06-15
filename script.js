@@ -2,7 +2,7 @@
 const DATA = {
   energie: {
     facteurEmission: 0.0324, // kgCO2/kWh
-    consoDefaut: 4278 // kWh/an
+    consoDefaut: 4278 
   },
   materiaux: {
     'acier': { facteur: 2210, distance: 600 },
